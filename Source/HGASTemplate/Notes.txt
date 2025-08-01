@@ -1,0 +1,13 @@
+Classlar Control İşe yararları al
+
+3d movement
+Indicator
+Lifestealı HAS de değil Exec de uygula ------ HAS yi dizayna göre değiştirmek lazım
+
+GC ler öğrenilmesi lazım, özellikle static gc ler nonreplicated gc ler falan
+
+--------------------------------
+
+Designda Collision channellar belirlenmeli
+Status VFX Handler ? 
+
