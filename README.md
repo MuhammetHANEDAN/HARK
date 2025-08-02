@@ -1,5 +1,5 @@
 # HARK
 
-Portfolio Project --- ARK survival Evolded Like
+Multiplayer Portfolio Project --- ARK survival Evolded Like
 
-Main focus ----> Inventory, Crafting, Gathering. With GAS
+Main focus ----> Inventory, Crafting, Gathering systems with GAS.
