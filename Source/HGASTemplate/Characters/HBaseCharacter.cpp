@@ -11,7 +11,6 @@
 #include "HGASTemplate/GamePlayTags/HGameplayTags.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
-#include "WorldPartition/Cook/WorldPartitionCookPackage.h"
 
 
 AHBaseCharacter::AHBaseCharacter()

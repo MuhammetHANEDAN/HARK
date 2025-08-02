@@ -20,7 +20,7 @@ void AHPlayerController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
 
-	CursorTrace();
+	//CursorTrace();
 	
 }
 
@@ -52,8 +52,6 @@ void AHPlayerController::SetupInputComponent()
 	UHInputComponent* HInputComponent = CastChecked<UHInputComponent>(InputComponent);
 
 	HInputComponent->BindAction(MoveAction,ETriggerEvent::Triggered,this,&AHPlayerController::Move);
-	HInputComponent->BindAction(ShiftAction,ETriggerEvent::Started,this,&AHPlayerController::ShiftPressed);
-	HInputComponent->BindAction(ShiftAction,ETriggerEvent::Completed,this,&AHPlayerController::ShiftReleased);
 
 	HInputComponent->BindAbilityActions(InputConfig,this,&ThisClass::AbilityInputTagPressed,&ThisClass::AbilityInputTagReleased,&ThisClass::AbilityInputTagHeld);
 	
@@ -98,10 +96,10 @@ UHAbilitySystemComponent* AHPlayerController::GetASC() const
 
 void AHPlayerController::Move(const FInputActionValue& InputActionValue)
 {
-	if (GetASC() && GetASC()->HasMatchingGameplayTag(FHGamePlayTags::Get().Player_Block_InputPressed))
+	/*if (GetASC() && GetASC()->HasMatchingGameplayTag(FHGamePlayTags::Get().Player_Block_InputPressed))
 	{
 		return;
-	}
+	}*/
 	
 	const FVector2d InputActionVector = InputActionValue.Get<FVector2d>();
 	const FRotator Rotation = GetControlRotation();

@@ -6,7 +6,7 @@
 
 AHPlayerState::AHPlayerState()
 {
-	NetUpdateFrequency = 100.f;
+	SetNetUpdateFrequency(100.f);
 
 	AbilitySystemComponent = CreateDefaultSubobject<UHAbilitySystemComponent>("AbilitySystemComponent");
 	AbilitySystemComponent->SetIsReplicated(true);

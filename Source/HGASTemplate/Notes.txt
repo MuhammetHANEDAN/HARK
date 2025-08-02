@@ -1,6 +1,10 @@
-Classlar Control İşe yararları al
 
 3d movement
+
+
+
+
+
 Indicator
 Lifestealı HAS de değil Exec de uygula ------ HAS yi dizayna göre değiştirmek lazım
 
@@ -10,4 +14,41 @@ GC ler öğrenilmesi lazım, özellikle static gc ler nonreplicated gc ler falan
 
 Designda Collision channellar belirlenmeli
 Status VFX Handler ? 
+
+--------------------
+
+Güncel Bilgiler
+
+BS 
+
+Player move speed = 600
+
+250 - walk
+500 - run
+
+BS lerde Move speed limit 1000
+
+
+----------------------
+
+-----------dış------------
+Performance 
+Network Performance
+
+
+---------ARK like ---------------------------
+
+🔢 ARK Oyuncu Statları (Attributes)
+🧍‍♂️ Temel Hayatta Kalma Statları
+Attribute	Açıklama
+Health	Oyuncunun canı. 0 olduğunda ölür.
+Stamina	Koşma, saldırma gibi aktivitelerde harcanır.
+Oxygen	Su altında kalma süresi.
+Food	Açlık durumu. Zamanla azalır. Biterse can gitmeye başlar.
+Water	Susuzluk. Aynı şekilde azalır ve can kaybına neden olur.
+Weight	Taşıyabileceğin toplam ağırlık. Aşılırsa yavaşlarsın.
+Temperature	Oyuncunun ortam sıcaklığına tepkisi. (Dolaylı stat)
+Torpidy	Bayılma eşiği. Uyuşukluk veya bayılma durumunu etkiler.
+
+
 

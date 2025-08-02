@@ -48,7 +48,7 @@ void AHCharacter::PossessedBy(AController* NewController) // Serverde çalışı
 	
 	// init ability actor info for server
 	InitAbilityActorInfo();
-	AddCharacterAbilities(); // Sadece serverde çağılıması gerektiği için, startup abilityleri ekliyoruz.
+	//AddCharacterAbilities(); // Sadece serverde çağılıması gerektiği için, startup abilityleri ekliyoruz.
 }
 
 void AHCharacter::OnRep_PlayerState() // Clientte
@@ -91,7 +91,7 @@ void AHCharacter::InitAbilityActorInfo()
 		}
 	}
 
-	InitializeDefaultAttributes();
+	//InitializeDefaultAttributes();
 }
 
 void AHCharacter::AbilitySystemInitialized(const UAbilitySystemComponent* ASC)
