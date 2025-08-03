@@ -9,6 +9,7 @@
 #include "HGASTemplate/GamePlayTags/HGameplayTags.h"
 #include "HGASTemplate/Input/HInputComponent.h"
 #include "HGASTemplate/Interfaces/InteractInterface.h"
+#include "HGASTemplate/Inventory/Components/PlayerInventoryComponent.h"
 #include "HGASTemplate/PlayerCore/PlayerStates/HPlayerState.h"
 #include "HGASTemplate/UI/WidgetComponents/DamageTextWidgetComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -60,7 +61,9 @@ void AHPlayerController::SetupInputComponent()
 
 	HInputComponent->BindAction(MoveAction,ETriggerEvent::Triggered,this,&AHPlayerController::Move);
 	HInputComponent->BindAction(LookAction,ETriggerEvent::Triggered,this,&AHPlayerController::Look);
-	
+
+	HInputComponent->BindAction(TogglePlayerInventoryAction,ETriggerEvent::Started,this,&AHPlayerController::TogglePlayerInventory);
+	HInputComponent->BindAction(ESCAction,ETriggerEvent::Started,this,&AHPlayerController::ESCPressed);
 
 	//HInputComponent->BindAbilityActions(InputConfig,this,&ThisClass::AbilityInputTagPressed,&ThisClass::AbilityInputTagReleased,&ThisClass::AbilityInputTagHeld);
 	
@@ -128,6 +131,22 @@ UHAbilitySystemComponent* AHPlayerController::GetASC() const
 		return Cast<UHAbilitySystemComponent>(DASC);
 	}
 	return HAbilitySystemComponent;
+}
+
+void AHPlayerController::TogglePlayerInventory()
+{
+	if (GetPlayerInventoryComponent())
+	{
+		GetPlayerInventoryComponent()->TogglePlayerInventory();
+	}
+}
+
+void AHPlayerController::ESCPressed()
+{
+	if (GetPlayerInventoryComponent())
+	{
+		GetPlayerInventoryComponent()->CloseAllWidgets();
+	}
 }
 
 void AHPlayerController::Move(const FInputActionValue& InputActionValue)
@@ -215,14 +234,14 @@ void AHPlayerController::TraceInteractChannel()
 	}
 }
 
-UPlayerInventoryComponent* AHPlayerController::GetPlayerInventoryComponent() const
+UPlayerInventoryComponent* AHPlayerController::GetPlayerInventoryComponent() 
 {
 	if (!PlayerInventoryComponent.IsValid())
 	{
 		AHPlayerState* PS = GetPlayerState<AHPlayerState>();
 		check(PS);
-		//PlayerInventoryComponent.
-
+		PlayerInventoryComponent = PS->GetPlayerInventoryComponent();
+		return PlayerInventoryComponent.Get();
 	}
 	return PlayerInventoryComponent.Get();
 }

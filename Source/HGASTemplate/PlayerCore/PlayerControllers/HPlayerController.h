@@ -61,10 +61,12 @@ public:
 	TObjectPtr<UInputAction> JumpAction;
 
 	UPROPERTY(EditAnywhere,Category="AProps")
-	TObjectPtr<UInputAction> ToggleInventoryAction;
+	TObjectPtr<UInputAction> TogglePlayerInventoryAction;
+	void TogglePlayerInventory();
 
 	UPROPERTY(EditAnywhere,Category="AProps")
 	TObjectPtr<UInputAction> ESCAction;
+	void ESCPressed();
 	
 	void Move(const FInputActionValue& InputActionValue);
 	void Look(const FInputActionValue& Value);
@@ -105,7 +107,7 @@ public:
 
 	TWeakObjectPtr<UPlayerInventoryComponent> PlayerInventoryComponent;
 
-	UPlayerInventoryComponent* GetPlayerInventoryComponent() const;
+	UPlayerInventoryComponent* GetPlayerInventoryComponent() ;
 
 
 	//---------------------- ?

@@ -7,9 +7,11 @@
 #include "PlayerInventoryComponent.generated.h"
 
 
+class UPlayerOpenInventoryCreatureWidget;
+class UPlayerOpenInventoryNoCraftWidget;
 struct FWidgetControllerParams;
 class UPlayerInventoryWidgetController;
-class UPlayerOpenInventoryWidget;
+class UPlayerOpenInventoryWithCraftWidget;
 class UPlayerInventoryWidget;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
@@ -31,10 +33,20 @@ public:
 
 	void ConstructInventoryWidget(const FWidgetControllerParams& WCParams);
 
-	// Craft Stationlar veya Lootbagler ve sonrası için 
-	TWeakObjectPtr<UPlayerOpenInventoryWidget> PlayerOpenInventoryWidget;
+	// Craft Stationlar  için 
+	TWeakObjectPtr<UPlayerOpenInventoryWithCraftWidget> PlayerOpenInventoryWithCraftWidget;
 	UPROPERTY(EditDefaultsOnly, Category = "AProps")
-	TSubclassOf<UPlayerOpenInventoryWidget> PlayerOpenInventoryWidgetClass;
+	TSubclassOf<UPlayerOpenInventoryWithCraftWidget> PlayerOpenInventoryWithCraftWidgetClass;
+
+	// Craft olmayanlar için 
+	TWeakObjectPtr<UPlayerOpenInventoryNoCraftWidget> PlayerOpenInventoryNoCraftWidget;
+	UPROPERTY(EditDefaultsOnly, Category = "AProps")
+	TSubclassOf<UPlayerOpenInventoryNoCraftWidget> PlayerOpenInventoryNoCraftWidgetClass;
+
+	// Creatureler için
+	TWeakObjectPtr<UPlayerOpenInventoryCreatureWidget> PlayerOpenInventoryCreatureWidget;
+	UPROPERTY(EditDefaultsOnly, Category = "AProps")
+	TSubclassOf<UPlayerOpenInventoryCreatureWidget> PlayerOpenInventoryCreatureWidgetClass;
 	
 	UPROPERTY()
 	TObjectPtr<UPlayerInventoryWidget> PlayerInventoryWidget;

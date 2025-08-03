@@ -6,6 +6,7 @@
 #include "HGASTemplate/UI/WidgetControllers/HWidgetController.h"
 #include "PlayerInventoryWidgetController.generated.h"
 
+class UPlayerInventoryComponent;
 /**
  * 
  */
@@ -14,5 +15,11 @@ class HGASTEMPLATE_API UPlayerInventoryWidgetController : public UHWidgetControl
 {
 	GENERATED_BODY()
 
+public:
+	
+	TWeakObjectPtr<UPlayerInventoryComponent> PlayerInventoryComponent;
+
+	UFUNCTION(BlueprintCallable)
+	void ClosePlayerInventory();
 	
 };

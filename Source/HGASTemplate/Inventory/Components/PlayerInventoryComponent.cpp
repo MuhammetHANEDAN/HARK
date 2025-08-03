@@ -3,9 +3,12 @@
 
 #include "PlayerInventoryComponent.h"
 
+#include "HGASTemplate/DEBUG/HDebugTypes.h"
 #include "HGASTemplate/Inventory/WidgetControllers/PlayerInventoryWidgetController.h"
 #include "HGASTemplate/Inventory/Widgets/PlayerInventoryWidget.h"
-#include "HGASTemplate/Inventory/Widgets/PlayerOpenInventoryWidget.h"
+#include "HGASTemplate/Inventory/Widgets/PlayerOpenInventoryCreatureWidget.h"
+#include "HGASTemplate/Inventory/Widgets/PlayerOpenInventoryNoCraftWidget.h"
+#include "HGASTemplate/Inventory/Widgets/PlayerOpenInventoryWithCraftWidget.h"
 
 
 UPlayerInventoryComponent::UPlayerInventoryComponent()
@@ -28,6 +31,8 @@ void UPlayerInventoryComponent::ConstructInventoryWidget(const FWidgetController
 	PlayerInventoryWidget = CreateWidget<UPlayerInventoryWidget>(WCParams.PlayerController,PlayerInventoryWidgetClass);
 	PlayerInventoryWidget->SetWidgetController(GetPlayerInventoryWidgetController(WCParams));
 	PlayerInventoryWidget->AddToViewport();
+	OwnerPlayerController = WCParams.PlayerController;
+	ClosePlayerInventory();
 }
 
 UPlayerInventoryWidgetController* UPlayerInventoryComponent::GetPlayerInventoryWidgetController(const FWidgetControllerParams& WCParams)
@@ -36,17 +41,28 @@ UPlayerInventoryWidgetController* UPlayerInventoryComponent::GetPlayerInventoryW
 	{
 		UPlayerInventoryWidgetController* WC = NewObject<UPlayerInventoryWidgetController>(this,PlayerInventoryWidgetControllerClass);
 		WC->SetWidgetControllerParams(WCParams);
+		WC->PlayerInventoryComponent = this;
+		PlayerInventoryWidgetController = WC;
 	}
 	return PlayerInventoryWidgetController;
 }
 
 void UPlayerInventoryComponent::CloseAllWidgets()
 {
-	if (!OwnerPlayerController.IsValid()) return;
-
-	if (PlayerOpenInventoryWidget.IsValid())
+	
+	if (PlayerOpenInventoryWithCraftWidget.IsValid())
 	{
-		PlayerOpenInventoryWidget.Get()->RemoveFromParent();
+		PlayerOpenInventoryWithCraftWidget.Get()->RemoveFromParent();
+	}
+
+	if (PlayerOpenInventoryNoCraftWidget.IsValid())
+	{
+		PlayerOpenInventoryNoCraftWidget.Get()->RemoveFromParent();
+	}
+
+	if (PlayerOpenInventoryCreatureWidget.IsValid())
+	{
+		PlayerOpenInventoryCreatureWidget.Get()->RemoveFromParent();
 	}
 
 	if (IsValid(PlayerInventoryWidget))
@@ -54,6 +70,8 @@ void UPlayerInventoryComponent::CloseAllWidgets()
 		PlayerInventoryWidget->SetVisibility(ESlateVisibility::Collapsed);
 		bPlayerInventoryOpen = false;
 	}
+	
+	if (!OwnerPlayerController.IsValid()) return;
 	
 	FInputModeGameOnly InputMode;
 	OwnerPlayerController->SetInputMode(InputMode);

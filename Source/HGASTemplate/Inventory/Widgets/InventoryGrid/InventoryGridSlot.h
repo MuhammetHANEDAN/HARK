@@ -3,16 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BaseInventoryWidget.h"
-#include "PlayerInventoryWidget.generated.h"
+#include "HGASTemplate/UI/Widget/HUserWidget.h"
+#include "InventoryGridSlot.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class HGASTEMPLATE_API UPlayerInventoryWidget : public UBaseInventoryWidget
+class HGASTEMPLATE_API UInventoryGridSlot : public UHUserWidget
 {
 	GENERATED_BODY()
-
-	
 };

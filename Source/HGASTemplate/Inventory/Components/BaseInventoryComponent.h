@@ -26,5 +26,7 @@ public:
 	                           FActorComponentTickFunction* ThisTickFunction) override;
 
 	virtual void CloseAllWidgets();
+
+	
 	
 };

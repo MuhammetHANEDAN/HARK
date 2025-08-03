@@ -7,8 +7,7 @@ UBaseInventoryComponent::UBaseInventoryComponent()
 {
 	
 	PrimaryComponentTick.bCanEverTick = false;
-
-	SetIsReplicated(true);
+	
 	
 }
 
