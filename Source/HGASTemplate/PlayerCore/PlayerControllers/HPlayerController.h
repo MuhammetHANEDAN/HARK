@@ -10,6 +10,7 @@
 #include "HPlayerController.generated.h"
 
 
+class UPlayerInventoryComponent;
 class UDamageTextWidgetComponent;
 class UData_InputConfig;
 class UNiagaraSystem;
@@ -45,33 +46,34 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
 
-private:
+public:
 
-	UPROPERTY(EditAnywhere,Category="Input")
+	UPROPERTY(EditAnywhere,Category="AProps")
 	TObjectPtr<UInputMappingContext> HMappingContext;
 
-	UPROPERTY(EditAnywhere,Category="Input")
+	UPROPERTY(EditAnywhere,Category="AProps")
 	TObjectPtr<UInputAction> MoveAction;
 
-	UPROPERTY(EditAnywhere,Category="Input")
-	TObjectPtr<UInputAction> ShiftAction;
+	UPROPERTY(EditAnywhere,Category="AProps")
+	TObjectPtr<UInputAction> LookAction;
+
+	UPROPERTY(EditAnywhere,Category="AProps")
+	TObjectPtr<UInputAction> JumpAction;
+
+	UPROPERTY(EditAnywhere,Category="AProps")
+	TObjectPtr<UInputAction> ToggleInventoryAction;
+
+	UPROPERTY(EditAnywhere,Category="AProps")
+	TObjectPtr<UInputAction> ESCAction;
 	
 	void Move(const FInputActionValue& InputActionValue);
-
-	UPROPERTY()
-	APawn* ControlledPawn; // biz ekledik
-
-	void CursorTrace();
-	FHitResult CursorHit;
-	
-	TScriptInterface<IAI_Interface> LastActor;
-	TScriptInterface<IAI_Interface> ThisActor;
+	void Look(const FInputActionValue& Value);
 
 	void AbilityInputTagPressed(FGameplayTag InputTag);
 	void AbilityInputTagReleased(FGameplayTag InputTag);
 	void AbilityInputTagHeld(FGameplayTag InputTag);
 
-	UPROPERTY(EditDefaultsOnly,Category="Input")
+	UPROPERTY(EditDefaultsOnly,Category="AProps")
 	TObjectPtr<UData_InputConfig> InputConfig;
 
 	UPROPERTY()
@@ -79,7 +81,34 @@ private:
 
 	UHAbilitySystemComponent* GetASC() const;
 
+	virtual void OnPossess(APawn* InPawn) override;
+	virtual void OnRep_Pawn() override;
+
+	bool bCanTraceInteractChannel();
+	void TraceInteractChannel();
 	
+	TWeakObjectPtr<AActor>LastActor;
+	TWeakObjectPtr<AActor>ThisActor;
+
+	UPROPERTY(EditDefaultsOnly, Category = "AProps")
+	double TraceLength = 200.f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "AProps")
+	TEnumAsByte<ECollisionChannel> InteractTraceChannel;
+	
+	UPROPERTY()
+	APawn* ControlledPawn; // biz ekledik
+
+	/**
+	 * Inventory Releated
+	 */
+
+	TWeakObjectPtr<UPlayerInventoryComponent> PlayerInventoryComponent;
+
+	UPlayerInventoryComponent* GetPlayerInventoryComponent() const;
+
+
+	//---------------------- ?
 	
 };
 

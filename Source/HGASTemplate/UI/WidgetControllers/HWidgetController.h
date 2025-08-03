@@ -44,7 +44,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerStatChangedSignature,  int3
 /**
  * 
  */
-UCLASS()
+UCLASS(BlueprintType,Blueprintable)
 class HGASTEMPLATE_API UHWidgetController : public UObject
 {
 	GENERATED_BODY()

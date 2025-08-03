@@ -28,6 +28,7 @@ AHCharacter::AHCharacter()
 	CameraBoom->SetupAttachment(GetRootComponent());
 	CameraBoom->SetUsingAbsoluteRotation(true);
 	CameraBoom->bDoCollisionTest = false;
+	CameraBoom->bUsePawnControlRotation = true;
 
 	TopDownCameraComponent = CreateDefaultSubobject<UCameraComponent>("TopDownCameraComponent");
 	TopDownCameraComponent->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
@@ -76,6 +77,12 @@ void AHCharacter::InitAbilityActorInfo()
 	AHPlayerState* HPlayerState = GetPlayerState<AHPlayerState>();
 	check(HPlayerState);
 	HPlayerState->GetAbilitySystemComponent()->InitAbilityActorInfo(HPlayerState,this);
+
+	if (GetController() && GetController()->IsLocalController())
+	{
+		HPlayerState->ConstructPlayerInventoryWidget();
+	}
+	
 	AbilitySystemComponent = HPlayerState->GetAbilitySystemComponent();
 	Cast<UHAbilitySystemComponent>(AbilitySystemComponent)->AbilityActorInfoSet(); // Delegate bağlama
 	AttributeSet = HPlayerState->GetAttributeSet();

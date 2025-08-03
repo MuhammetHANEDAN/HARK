@@ -7,6 +7,8 @@
 #include "GameFramework/PlayerState.h"
 #include "HPlayerState.generated.h"
 
+struct FWidgetControllerParams;
+class UPlayerInventoryComponent;
 class ULevelUpInfo;
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerStatChanged, int32 /*StatValue*/)
 
@@ -42,6 +44,8 @@ public:
 	void SetXP(int32 InXP);
 	void SetLevel(int32 InLevel);
 
+	virtual void PostInitializeComponents() override;
+
 protected:
 	
 	UPROPERTY(VisibleAnywhere)
@@ -50,8 +54,13 @@ protected:
 	UPROPERTY()
 	TObjectPtr<UAttributeSet> AttributeSet;
 
-private:
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
+	TObjectPtr<UPlayerInventoryComponent> PlayerInventoryComponent;
+	
+public:
 
+	UPlayerInventoryComponent* GetPlayerInventoryComponent();
+	
 	UPROPERTY(VisibleAnywhere, ReplicatedUsing=OnRep_Level)
 	int32 Level = 1;
 	UFUNCTION()
@@ -71,6 +80,12 @@ private:
 	int32 SpellPoints = 0;
 	UFUNCTION()
 	void OnRep_SpellPoints(int32 OldSpellPoints);
+
+	/**
+	 * Inventory
+	 */
+
+	void ConstructPlayerInventoryWidget();
 
 public:
 	

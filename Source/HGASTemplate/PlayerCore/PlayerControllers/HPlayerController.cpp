@@ -8,11 +8,15 @@
 #include "HGASTemplate/Characters/HCharacter.h"
 #include "HGASTemplate/GamePlayTags/HGameplayTags.h"
 #include "HGASTemplate/Input/HInputComponent.h"
+#include "HGASTemplate/Interfaces/InteractInterface.h"
+#include "HGASTemplate/PlayerCore/PlayerStates/HPlayerState.h"
 #include "HGASTemplate/UI/WidgetComponents/DamageTextWidgetComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 
 AHPlayerController::AHPlayerController()
 {
+	PrimaryActorTick.bCanEverTick = true;
 	bReplicates = true;
 }
 
@@ -20,7 +24,10 @@ void AHPlayerController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
 
-	//CursorTrace();
+	if (bCanTraceInteractChannel())
+	{
+		TraceInteractChannel();
+	}
 	
 }
 
@@ -52,9 +59,38 @@ void AHPlayerController::SetupInputComponent()
 	UHInputComponent* HInputComponent = CastChecked<UHInputComponent>(InputComponent);
 
 	HInputComponent->BindAction(MoveAction,ETriggerEvent::Triggered,this,&AHPlayerController::Move);
-
-	HInputComponent->BindAbilityActions(InputConfig,this,&ThisClass::AbilityInputTagPressed,&ThisClass::AbilityInputTagReleased,&ThisClass::AbilityInputTagHeld);
+	HInputComponent->BindAction(LookAction,ETriggerEvent::Triggered,this,&AHPlayerController::Look);
 	
+
+	//HInputComponent->BindAbilityActions(InputConfig,this,&ThisClass::AbilityInputTagPressed,&ThisClass::AbilityInputTagReleased,&ThisClass::AbilityInputTagHeld);
+	
+}
+
+void AHPlayerController::OnPossess(APawn* InPawn) // Sadece serverda Fire 
+{
+	Super::OnPossess(InPawn);
+
+	if (IsLocalController())
+	{
+		UHInputComponent* HInputComponent = CastChecked<UHInputComponent>(InputComponent);
+
+		ACharacter* CH = CastChecked<ACharacter>(InPawn);
+		HInputComponent->BindAction(JumpAction,ETriggerEvent::Triggered,CH,&ACharacter::Jump);
+	}
+	
+}
+
+void AHPlayerController::OnRep_Pawn()
+{
+	Super::OnRep_Pawn();
+
+	if (IsLocalController())
+	{
+		UHInputComponent* HInputComponent = CastChecked<UHInputComponent>(InputComponent);
+
+		ACharacter* CH = CastChecked<ACharacter>(GetPawn());
+		HInputComponent->BindAction(JumpAction,ETriggerEvent::Triggered,CH,&ACharacter::Jump);
+	}
 }
 
 void AHPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
@@ -116,32 +152,13 @@ void AHPlayerController::Move(const FInputActionValue& InputActionValue)
 	}
 }
 
-void AHPlayerController::CursorTrace()
+void AHPlayerController::Look(const FInputActionValue& Value)
 {
+	FVector2D LookAxisVector = Value.Get<FVector2D>();
 
-	/*if (GetASC() && GetASC()->HasMatchingGameplayTag(FHGamePlayTags::Get().Player_Block_CursorTrace))
-	{
-		if (LastActor) LastActor->UnHighlightActor();
-		if (ThisActor) ThisActor->UnHighlightActor();
-		LastActor = nullptr;
-		ThisActor = nullptr;
-		return;
-	}
-	
-	GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
-	
-	if(!CursorHit.bBlockingHit) return;
-
-	LastActor = ThisActor;
-	ThisActor = CursorHit.GetActor();
-	
-	if(LastActor != ThisActor)
-	{
-		if(LastActor) LastActor->UnHighlightActor();
-		if(ThisActor) ThisActor->HighlightActor();
-	}*/
+	AddYawInput(LookAxisVector.X);
+	AddPitchInput(LookAxisVector.Y);
 }
-
 
 void AHPlayerController::Client_ShowDamageNumber_Implementation(float DamageAmount, ACharacter* TargetCharacter, bool bBlockedHit, bool bCriticalHit)
 {
@@ -154,3 +171,59 @@ void AHPlayerController::Client_ShowDamageNumber_Implementation(float DamageAmou
 		DamageText->SetDamageText(DamageAmount,bBlockedHit,bCriticalHit);
 	}
 }
+
+bool AHPlayerController::bCanTraceInteractChannel()
+{
+	if (IsValid(GetPawn()) && IsLocalController()) return true;
+	return false;
+}
+
+void AHPlayerController::TraceInteractChannel()
+{
+	if (!IsValid(GEngine) || !IsValid(GEngine->GameViewport)) return;
+	FVector2D ViewportSize;
+	GEngine->GameViewport->GetViewportSize(ViewportSize);
+	const FVector2D ViewportCenter = ViewportSize / 2.f;
+	FVector TraceStart;
+	FVector Forward;
+	if (!UGameplayStatics::DeprojectScreenToWorld(this, ViewportCenter, TraceStart, Forward)) return;
+
+	const FVector TraceEnd = TraceStart + Forward * TraceLength;
+	FHitResult HitResult;
+	GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, InteractTraceChannel);
+	//DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Red, false, -1, 0, 1.f);
+
+	LastActor = ThisActor;
+	ThisActor = HitResult.GetActor();
+
+	if (ThisActor == LastActor) return;
+
+	if (ThisActor.IsValid())
+	{
+		if (ThisActor->Implements<UInteractInterface>())
+		{
+			IInteractInterface::Execute_Interact(ThisActor.Get());
+		}
+	}
+
+	if (LastActor.IsValid())
+	{
+		if (LastActor->Implements<UInteractInterface>())
+		{
+			IInteractInterface::Execute_InteractEnd(LastActor.Get());
+		}
+	}
+}
+
+UPlayerInventoryComponent* AHPlayerController::GetPlayerInventoryComponent() const
+{
+	if (!PlayerInventoryComponent.IsValid())
+	{
+		AHPlayerState* PS = GetPlayerState<AHPlayerState>();
+		check(PS);
+		//PlayerInventoryComponent.
+
+	}
+	return PlayerInventoryComponent.Get();
+}
+

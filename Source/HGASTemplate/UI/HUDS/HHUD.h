@@ -12,8 +12,8 @@ class UAttributeMenuWidgetController;
 class UAttributeSet;
 class UAbilitySystemComponent;
 struct FWidgetControllerParams;
-class UOverlayWidgetController;
 class UHUserWidget;
+class UOverlayWidgetController;
 /**
  * 
  */
@@ -31,8 +31,22 @@ protected:
 	virtual void BeginPlay() override;
 
 
-private:
+public:
 
+	UPROPERTY(EditDefaultsOnly,Category="AProps")
+	TSubclassOf<UHUserWidget> OverlayWidgetClass;
+
+	UPROPERTY()
+	TObjectPtr<UHUserWidget> OverlayWidget;
+	/** Overlay widget yok ise oluşturur ve gerekşi işlemleri yapar,var ise olanı döndürür*/
+	UOverlayWidgetController* GetOverlayWidgetController(const FWidgetControllerParams& WCParams);
+	
+
+	UPROPERTY(EditDefaultsOnly,Category="AProps")
+	TSubclassOf<UOverlayWidgetController> OverlayWidgetControllerClass;
+
+	UPROPERTY()
+	TObjectPtr<UOverlayWidgetController> OverlayWidgetController;
 	
 	
 

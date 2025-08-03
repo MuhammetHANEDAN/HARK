@@ -2,6 +2,8 @@
 #include "HPlayerState.h"
 #include "HGASTemplate/AbilitySystem/HAbilitySystemComponent.h"
 #include "HGASTemplate/AbilitySystem/HAttributeSet.h"
+#include "HGASTemplate/Inventory/Components/PlayerInventoryComponent.h"
+#include "HGASTemplate/UI/WidgetControllers/HWidgetController.h"
 #include "Net/UnrealNetwork.h"
 
 AHPlayerState::AHPlayerState()
@@ -13,6 +15,9 @@ AHPlayerState::AHPlayerState()
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
 	
 	AttributeSet = CreateDefaultSubobject<UHAttributeSet>("AttributeSet");
+
+	PlayerInventoryComponent = CreateDefaultSubobject<UPlayerInventoryComponent>("Player Inventory Comp");
+	PlayerInventoryComponent->SetIsReplicated(true);
 }
 
 void AHPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -22,6 +27,13 @@ void AHPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	DOREPLIFETIME(AHPlayerState, XP);
 	DOREPLIFETIME(AHPlayerState, AttributePoints);
 	DOREPLIFETIME(AHPlayerState, SpellPoints);
+}
+
+void AHPlayerState::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	PlayerInventoryComponent->OwnerPlayerController = GetPlayerController();
 }
 
 UAbilitySystemComponent* AHPlayerState::GetAbilitySystemComponent() const
@@ -51,6 +63,11 @@ void AHPlayerState::SetLevel(int32 InLevel)
 {
 	Level = InLevel;
 	OnLevelChangedDelegate.Broadcast(Level, false);
+}
+
+UPlayerInventoryComponent* AHPlayerState::GetPlayerInventoryComponent() 
+{
+	return PlayerInventoryComponent.Get();
 }
 
 void AHPlayerState::OnRep_Level(int32 OldLevel)
@@ -83,4 +100,15 @@ void AHPlayerState::AddToSpellPoints(int32 InPoints)
 {
 	SpellPoints += InPoints;
 	OnSpellPointsChangedDelegate.Broadcast(SpellPoints);
+}
+
+void AHPlayerState::ConstructPlayerInventoryWidget()
+{
+	FWidgetControllerParams Params;
+	Params.AbilitySystemComponent = AbilitySystemComponent;
+	Params.AttributeSet = AttributeSet;
+	Params.PlayerState = this;
+	Params.PlayerController = GetPlayerController();
+	
+	PlayerInventoryComponent->ConstructInventoryWidget(Params);
 }

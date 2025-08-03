@@ -1,5 +1,12 @@
 
-3d movement
+
+
+
+
+
+
+Data Asset
+
 
 
 
@@ -19,7 +26,7 @@ Status VFX Handler ?
 
 Güncel Bilgiler
 
-BS 
+BS1D
 
 Player move speed = 600
 
@@ -49,6 +56,20 @@ Water	Susuzluk. Aynı şekilde azalır ve can kaybına neden olur.
 Weight	Taşıyabileceğin toplam ağırlık. Aşılırsa yavaşlarsın.
 Temperature	Oyuncunun ortam sıcaklığına tepkisi. (Dolaylı stat)
 Torpidy	Bayılma eşiği. Uyuşukluk veya bayılma durumunu etkiler.
+
+Ek olarak GAS eklemeyi düşündüğümüz
+
+Harvestmultiplier 
+
+Wood
+Stone
+Metal
+Bitki
+Gas
+Pearl
+Deri
+Meat
+
 
 
 
